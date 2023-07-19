@@ -1,4 +1,4 @@
-# rest_api_testing_postman
+# Test automation with post test collection with new man
 
 
 Running rest api test collection and upload archifact on new push. <br>
