@@ -1,0 +1,37 @@
+name: Run Postman Collection
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '0 * * * *'
+
+jobs:
+  run-collection:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Install newman and htmlreports
+        run: npm install -g newman@5.3.2 newman-reporter-htmlextra@1.22.11
+        
+      - name: Run collection
+        run: newman run APITesting.postman_collection_last.json -e PROD.postman_environment.json -r htmlextra --verbose
+        
+      - name: Find HTML file
+        run: |
+          FILE=$(find . -name "*.html" -type f)
+          echo "FILE=$FILE" >> $GITHUB_ENV  
+          
+      - name: Upload results
+        uses: actions/upload-artifact@v2
+        with:
+          name: newman-results
+          path: ${{ env.FILE }}
